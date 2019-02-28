@@ -13,7 +13,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:9000/api/v1/schools/")
+    fetch("http://localhost:9000/api/v1/schools")
       .then(res => {
         if (!res.ok) {
           throw Error(res.statusText);
@@ -100,12 +100,12 @@ class App extends Component {
                   {this.state.schools.map((obj, i) => 
                   <div key={i}>
                     <div className = "UniName" onClick={() => this.changeView(i) }>{obj.university}</div>
-                    {obj.center}    
+                    <div>{obj.center}</div>    
                   </div>     
                 )}  
                 </div>
                 : 
-                <School backToList={() => this.changeView()} school={this.state.schools[this.state.selectedSchoolIndex]}/>
+                <School backToList={(i) => this.changeView(i)} school={this.state.schools[this.state.selectedSchoolIndex]}/>
               }
             </div>  
 

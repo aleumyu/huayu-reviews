@@ -26,7 +26,7 @@ class School extends Component {
 
     componentDidMount() {
       this.setState ({
-        school: this.props.school,
+        school: this.props.school, // no puedes definirlo en state? o no puedes hacer sin esto?
       });
       fetch(`http://localhost:9000/api/v1/schools/${this.props.school.id}/reviews`)
         .then(res => {
@@ -46,9 +46,7 @@ class School extends Component {
     }
 
     getWeather() {
-      console.log("weathersuccess")
-      this.setState({
-      });
+      // console.log("weathersuccess")
       let url = `${URL}/weather?q=${this.state.school.city}&APPID=${KEY}`;
       fetch (url)
       .then(response => {
@@ -75,18 +73,15 @@ class School extends Component {
 
   
   updateInput = (event) => {
-    //handleChange
     this.setState({
       [event.target.name]: event.target.value,
-      time_input: event.timeStamp
+      time_input: event.timeStamp 
     });
   }
 
 
   addReview(e) {
     e.preventDefault();
-    //handleSubmit
-    // add review to database
     let newReview = {
       user_id: this.state.user_id,
       school_id: this.state.school.id,
@@ -141,15 +136,15 @@ class School extends Component {
           <div id = "reviews">
               {this.state.reviews.map((obj, i) => 
                 <div key={i}>    
-                <h5>{obj.title}</h5>
-                <p className="small">User: {this.state.reviews.user_id}</p>
-                <p className ="small"> Post date:{obj.created_at}</p>
-                <p className="small">Program start date:{obj.start_date}</p> 
-                <p className ="small">End date: {obj.end_date}</p>
-                <p>Overall Review: {obj.general_review}</p> 
-                <p>Likes: {obj.likes}</p> 
-                <p>Dislikes: {obj.dislikes}</p> 
-                <p>Impression of the city: {obj.city_impression}</p>
+                  <h5>{obj.title}</h5>
+                  <p className="small">User: {this.state.reviews.user_id}</p>
+                  <p className ="small"> Post date:{obj.created_at}</p>
+                  <p className="small">Program start date:{obj.start_date}</p> 
+                  <p className ="small">End date: {obj.end_date}</p>
+                  <p>Overall Review: {obj.general_review}</p> 
+                  <p>Likes: {obj.likes}</p> 
+                  <p>Dislikes: {obj.dislikes}</p> 
+                  <p>Impression of the city: {obj.city_impression}</p>
                 </div>     
               )}  
             </div>

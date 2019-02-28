@@ -4,14 +4,96 @@ var db = require("./helper");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Express' }); ///what is it??
 });
 
 router.get('/testAPI', function(req, res, next) {
   res.send('index');
 });
 
+
+
+
+// ?location=Northern&population=2674000&city=taipei
+
+router.get('/api/v1/schools', function (req, res, next) {
+  let locParam = req.query.location;
+  let cityParam = req.query.city;
+  let popParam = req.query.population;
+  let popValue = "";
+
+  if (req.query.population === "_5") {
+    popValue = "c.population < 500000"; 
+  } else if (req.query.population === "5_20") {
+    popValue = "c.population > 500000 AND c.population < 2000000"
+  } else if (req.query.population === "20_") {
+    popValue = "c.population > 2000000"
+  }
+
+ //c.population=${popParam}
+
+  if (!locParam && !popParam && !cityParam) {
+    //console.log("NO PARAMS")
+    db('SELECT * FROM schools ORDER BY id ASC;')
+      .then(results => {
+        if (results.error) {
+          res.status(500).send(results.error);
+        }
+        console.log('results: ' + JSON.stringify(results.data));
+        res.send(results.data);
+      })
+  } else if (locParam && popParam && cityParam) {
+    //console.log("ALL PARAMS")
+    db(`SELECT s.id, university, center, location, s.city, population FROM schools s INNER JOIN cities c  ON s.city=c.city WHERE s.location="${locParam}" AND s.city="${cityParam}" AND  c.population=${popParam};`)
+      .then(results => {
+        if (results.error) {
+          res.status(500).send(results.error);
+        }
+        console.log('results: ' + JSON.stringify(results.data));
+        res.send(results.data);
+      })
+  } else if (!locParam || !popParam || !cityParam) {
+    let baseQuery = "SELECT s.id, university, center, location, s.city, population FROM schools s INNER JOIN cities c  ON s.city=c.city WHERE ";
+    let fullQuery = baseQuery;
+    let containOtherQuery = false;
+
+    if (locParam) {
+      fullQuery += `s.location="${locParam}"`;
+      containOtherQuery = true;
+    }
+    if (cityParam && containOtherQuery) {
+      fullQuery += `AND s.city="${cityParam}"`
+    }
+    if (cityParam && !containOtherQuery) {
+      fullQuery += `s.city="${cityParam}"`
+      containOtherQuery = true;
+    }
+    if (popParam && containOtherQuery) {
+      fullQuery += `AND ${popValue}`
+    }
+    if (popParam && !containOtherQuery) {
+      fullQuery += `${popValue}`
+    }
+
+    db(`${fullQuery};`)
+      .then(results => {
+        if (results.error) {
+          res.status(500).send(results.error);
+        }
+        console.log('results: ' + JSON.stringify(results.data));
+        res.send(results.data);
+      })
+  }
+});
+
+// /cars?color=blue&type=sedan&doors=4
+//"SELECT * FROM user WHERE (:first IS NULL || first = :first) AND (:last IS NULL || last = :last)"
+
+
+/*
+
 router.get('/api/v1/schools', (req, res, next) => {
+  console.log('testing');
   db('SELECT * FROM schools ORDER BY id ASC;')
     .then(results => {
       if (results.error) {
@@ -21,6 +103,7 @@ router.get('/api/v1/schools', (req, res, next) => {
       res.send(results.data);
     })
 });
+*/
 
 router.get('/api/v1/schools/:id', (req, res, next) => {
   db('SELECT * FROM schools WHERE schools.id =' + `${req.params.id}`)
