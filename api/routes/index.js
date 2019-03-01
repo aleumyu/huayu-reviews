@@ -13,9 +13,6 @@ router.get('/testAPI', function(req, res, next) {
 
 
 
-
-// ?location=Northern&population=2674000&city=taipei
-
 router.get('/api/v1/schools', function (req, res, next) {
   let locParam = req.query.location;
   let cityParam = req.query.city;
@@ -25,12 +22,10 @@ router.get('/api/v1/schools', function (req, res, next) {
   if (req.query.population === "_5") {
     popValue = "c.population < 500000"; 
   } else if (req.query.population === "5_20") {
-    popValue = "c.population > 500000 AND c.population < 2000000"
+    popValue = "c.population > 500000 AND c.population < 2000000";
   } else if (req.query.population === "20_") {
-    popValue = "c.population > 2000000"
+    popValue = "c.population > 2000000";
   }
-
- //c.population=${popParam}
 
   if (!locParam && !popParam && !cityParam) {
     //console.log("NO PARAMS")
@@ -52,27 +47,39 @@ router.get('/api/v1/schools', function (req, res, next) {
         console.log('results: ' + JSON.stringify(results.data));
         res.send(results.data);
       })
-  } else if (!locParam || !popParam || !cityParam) {
+  } else {       //else if (!locParam || !popParam || !cityParam) 
     let baseQuery = "SELECT s.id, university, center, location, s.city, population FROM schools s INNER JOIN cities c  ON s.city=c.city WHERE ";
     let fullQuery = baseQuery;
     let containOtherQuery = false;
 
     if (locParam) {
-      fullQuery += `s.location="${locParam}"`;
+      locParam = locParam.split(',').map( e => `s.location="${e}"`).join(' OR ');
+      fullQuery += `${locParam}`;
       containOtherQuery = true;
     }
-    if (cityParam && containOtherQuery) {
-      fullQuery += `AND s.city="${cityParam}"`
+    if (cityParam) {
+      cityParam = cityParam.split(',').map( e => `s.city="${e}"`).join(' OR ');
+      if (containOtherQuery) {
+        fullQuery += `AND ${cityParam}`;
+      } else {
+        fullQuery += `${cityParam}`;
+        containOtherQuery = true;
+      }
+    }
+    /*if (cityParam && containOtherQuery) {
+      cityParam = cityParam.split(',').map( e => `s.city="${e}"`).join(' OR ');
+      fullQuery += `AND ${cityParam}`
     }
     if (cityParam && !containOtherQuery) {
-      fullQuery += `s.city="${cityParam}"`
+      cityParam = cityParam.split(',').map( e => `s.city="${e}"`).join(' OR ');
+      fullQuery += `${cityParam}`;
       containOtherQuery = true;
-    }
+    }*/
     if (popParam && containOtherQuery) {
-      fullQuery += `AND ${popValue}`
+      fullQuery += `AND ${popValue}`;
     }
     if (popParam && !containOtherQuery) {
-      fullQuery += `${popValue}`
+      fullQuery += `${popValue}`;
     }
 
     db(`${fullQuery};`)
@@ -86,24 +93,7 @@ router.get('/api/v1/schools', function (req, res, next) {
   }
 });
 
-// /cars?color=blue&type=sedan&doors=4
-//"SELECT * FROM user WHERE (:first IS NULL || first = :first) AND (:last IS NULL || last = :last)"
 
-
-/*
-
-router.get('/api/v1/schools', (req, res, next) => {
-  console.log('testing');
-  db('SELECT * FROM schools ORDER BY id ASC;')
-    .then(results => {
-      if (results.error) {
-        res.status(500).send(results.error);
-      }
-      console.log('results: ' + JSON.stringify(results.data));
-      res.send(results.data);
-    })
-});
-*/
 
 router.get('/api/v1/schools/:id', (req, res, next) => {
   db('SELECT * FROM schools WHERE schools.id =' + `${req.params.id}`)
