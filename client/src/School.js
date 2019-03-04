@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import './School.css';
+import 'bootstrap/dist/css/bootstrap.css';
+
+
 const URL = "https://api.openweathermap.org/data/2.5";
 const KEY = "7a0d513132cd8c781cca0a8440eb61bb";
+
 
 
 class School extends Component {
@@ -117,7 +121,7 @@ class School extends Component {
   render() {
     return (
       <div id="School">
-
+        <div className="container">
           <button className= "back" onClick={this.props.backToList}> Back to all schools</button>   
 
           <div className="school-info">
@@ -132,7 +136,9 @@ class School extends Component {
           <div className="map">
             <iframe title = "School Location" src= {this.state.school.map} ></iframe>
           </div>
+        </div>
 
+        <div className="container">
           <div id = "reviews">
               {this.state.reviews.map((obj, i) => 
                 <div key={i}>    
@@ -148,8 +154,9 @@ class School extends Component {
                 </div>     
               )}  
             </div>
+          </div>
 
-            <div className = "reviewform">
+          <div className="container" id="reviewform">
             <div className ="formheading">Please leave a review of your experience</div>
               <form>
                 <label>Name</label>
@@ -185,7 +192,7 @@ class School extends Component {
                 <input type="submit" value="Submit" onClick={(e) => this.addReview(e)}></input>
               </form>
             
-            </div>    
+          </div>    
 
       </div>
     );

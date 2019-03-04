@@ -25,11 +25,12 @@
   font-size: .7rem;
 }
 
-.reviewform {
+/*
+#reviewform {
   max-width: 700px;
   padding: 20px 12px 10px 20px;
   font: 13px
-}
+}*/
 
 .formheading{
 font-weight: bold;

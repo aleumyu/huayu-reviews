@@ -17,8 +17,8 @@ router.get('/api/v1/schools', function (req, res, next) {
   let locParam = req.query.location;
   let cityParam = req.query.city;
   let popParam = req.query.population;
-  let popValue = "";
-
+  let popValue = [];
+  /*
   if (req.query.population === "_5") {
     popValue = "c.population < 500000"; 
   } else if (req.query.population === "5_20") {
@@ -26,9 +26,8 @@ router.get('/api/v1/schools', function (req, res, next) {
   } else if (req.query.population === "20_") {
     popValue = "c.population > 2000000";
   }
-
+*/
   if (!locParam && !popParam && !cityParam) {
-    //console.log("NO PARAMS")
     db('SELECT * FROM schools ORDER BY id ASC;')
       .then(results => {
         if (results.error) {
@@ -38,7 +37,6 @@ router.get('/api/v1/schools', function (req, res, next) {
         res.send(results.data);
       })
   } else if (locParam && popParam && cityParam) {
-    //console.log("ALL PARAMS")
     db(`SELECT s.id, university, center, location, s.city, population FROM schools s INNER JOIN cities c  ON s.city=c.city WHERE s.location="${locParam}" AND s.city="${cityParam}" AND  c.population=${popParam};`)
       .then(results => {
         if (results.error) {
@@ -76,12 +74,37 @@ router.get('/api/v1/schools', function (req, res, next) {
       containOtherQuery = true;
     }*/
     if (popParam && containOtherQuery) {
+      popParam.split(',').map( e => {
+        if (e === "_5") {
+          popValue.push("c.population < 500000");
+          console.log(popValue);
+        }
+        if (e === "5_20") {
+          popValue.push("c.population > 500000 AND c.population < 2000000");
+        }
+        if (e === "20_") {
+          popValue.push("c.population > 2000000");
+        }
+      });
+      popValue = popValue.join(' OR ');
       fullQuery += `AND ${popValue}`;
     }
     if (popParam && !containOtherQuery) {
+      popParam.split(',').map( e => {
+        if (e === "_5") {
+          popValue.push("c.population < 500000");
+        }
+        if (e === "5_20") {
+          popValue.push("c.population > 500000 AND c.population < 2000000");
+        }
+        if (e === "20_") {
+          popValue.push("c.population > 2000000");
+        }
+      });
+      console.log(popValue);
+      popValue = popValue.join(' OR ');
       fullQuery += `${popValue}`;
     }
-
     db(`${fullQuery};`)
       .then(results => {
         if (results.error) {

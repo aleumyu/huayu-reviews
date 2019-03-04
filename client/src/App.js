@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import School from "./School";
+import 'bootstrap/dist/css/bootstrap.css';
 import { futimes } from 'fs';
 
 class App extends Component {
@@ -10,8 +11,8 @@ class App extends Component {
         checkBox: [
           {name: "location", value: "Northern", isChecked: false},
           {name: "location", value: "Eastern" , isChecked: false},
-          {name: "location", value: "Western" , isChecked: false},
           {name: "location", value: "Southern" , isChecked: false},
+          {name: "location", value: "Central" , isChecked: false},
           {name: "population", value: "_5" , isChecked: false},
           {name: "population", value: "5_20", isChecked: false},
           {name: "population", value: "20_", isChecked: false},
@@ -75,7 +76,8 @@ class App extends Component {
 
     let loc = [];
     let locParam = "";
-    let popParam = "population=";
+    let pop = [];
+    let popParam = "";
     let city = [];
     let cityParam = ""
   
@@ -84,14 +86,15 @@ class App extends Component {
         loc.push(`${e.value}`);
         locParam = loc.join(',');    
       } else if (e.name === "population" && e.isChecked) {
-        popParam += `${e.value}`;
+        pop.push(`${e.value}`);
+        popParam = pop.join(','); 
       } else if (e.name === "city" && e.isChecked) {
         city.push(`${e.value}`);
         cityParam = city.join(',');
       }
     })
 
-    fetch(`http://localhost:9000/api/v1/schools?location=${locParam}&${popParam}&city=${cityParam}`)
+    fetch(`http://localhost:9000/api/v1/schools?location=${locParam}&population=${popParam}&city=${cityParam}`)
       .then(results => {
         if (!results.ok) {
           throw Error(results.statusText);
@@ -111,9 +114,6 @@ class App extends Component {
 
 
 
-
-
-
   changeView(i) {
     if (this.state.appView === true) { 
       this.setState ({
@@ -129,72 +129,86 @@ class App extends Component {
   
   render() {
     return (
-      <div className ="body">
-        <img className = "hero-image" src="https://images.unsplash.com/photo-1470004914212-05527e49370b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1526&q=80" alt ="Taipei"></img>
-    
-          <div className="hero-text">
-              <h1>HUAYU <br /> Reviews</h1>
-              <p>Explore Taiwanese universities related to the HUAYU Enrichment Scholarship. Help others and leave a review of your experience!</p>
-          </div>
-
-          <div>  
-            <div className="checklist">
-              <div id="Location">
-                  <h3>Location</h3>
-                    <input type="checkbox" value="Northern" onChange = {(e) => this.updateFilter(e)}/>
-                    <label className="container">Northern</label> <br />
-                    <input type="checkbox" value="Western" onChange = {(e) => this.updateFilter(e)}/>
-                    <label className="container">Western</label> <br />
-                    <input type="checkbox" value="Southern" onChange = {(e) => this.updateFilter(e)}/>
-                    <label className="container">Southern</label> <br />
-                    <input type="checkbox" value="Eastern" onChange = {(e) => this.updateFilter(e)}/>
-                    <label className="container">Eastern</label> <br />
-              </div>
-
-              <div id="Population">
-                <h3>Population</h3>
-                  <input type="checkbox" value="_5" onChange = {(e) => this.updateFilter(e)} />
-                  <label className="container"> &lt; 500,000 </label><br />
-                  <input type="checkbox" value="5_20" onChange = {(e) => this.updateFilter(e)}/>
-                  <label className="container">500,000 - 2 million</label><br />
-                  <input type="checkbox" value="20_" onChange = {(e) => this.updateFilter(e)}/>
-                  <label className="container"> &gt; 2 million</label><br />
-              </div>
-
-              <div id="City">
-                <h3>City</h3>
-                  <input type="checkbox" value="Taipei" onChange = {(e) => this.updateFilter(e)}/>
-                  <label className="container">Taipei</label> <br />
-                  <input type="checkbox" value="Taichung" onChange = {(e) => this.updateFilter(e)}  />
-                  <label className="container">Taichung</label><br />
-                  <input type="checkbox" value="Kaohsiung" onChange = {(e) => this.updateFilter(e)}/>
-                  <label className="container">Kaohsiung</label><br />
-                  <input type="checkbox" value="Taoyuan" onChange = {(e) => this.updateFilter(e)}/>
-                  <label className  ="container">Taoyuan</label><br />
-              </div>    
-              <iframe id="fullmap" src="https://www.google.com/maps/d/embed?mid=1H2WUKmQ8z5mXt6oaqKKXFFEvvH-6lybo&hl=en" width="200" height="300" className = "bigmap" title="Map of all school locations"></iframe>
-
-            </div>
-
-            <div className = "App">
-
-              {this.state.appView ? 
-                <div id = "gallery">
-                  <h3>Find your school</h3>
-                  {this.state.schools.map((obj, i) => 
-                  <div key={i}>
-                    <div className = "UniName" onClick={() => this.changeView(i) }>{obj.university}</div>
-                    <div>{obj.center}</div>    
-                  </div>     
-                )}  
+      <body>
+        <header>
+          <div className="jumbotron" id="hero"> 
+           
+              <div className="container align-items-center align-content-center" id="hero-text">
+                <div className="row align-items-center">
+                  <div className="col-md-3 col-sm-3 col-xs-3 font-weight-bold text-right align-self-center">
+                    <h1>HUAYU <br /> Reviews</h1>
+                  </div>
+                  <div className="col-md-9 col-sm-9 col-xs-9 font-weight-bold text-left border-left border-white align-self-center">
+                    <p className="">Explore Taiwanese universities related to the HUAYU Enrichment Scholarship. Help others and <br /> leave a review of your experience!</p>
+                  </div>
                 </div>
-                : 
-                <School backToList={(i) => this.changeView(i)} school={this.state.schools[this.state.selectedSchoolIndex]}/>
-              }
-            </div>  
-
+              </div>
+           
           </div>
-      </div>  
+        </header>
+
+        <main>
+          <div className="container">  
+            <div className="row" id="checklist">
+              <div className="col-md-3 col-sm-3 col-xs-3">
+                <div id="Location">
+                    <h4 className="font-weight-bold mt-3">Location</h4>
+                      <input type="checkbox" value="Northern" onChange = {(e) => this.updateFilter(e)}/>
+                      <label className="checkbox-inline pl-2">Northern</label> <br />
+                      <input type="checkbox" value="Southern" onChange = {(e) => this.updateFilter(e)}/>
+                      <label className="checkbox-inline pl-2">Southern</label> <br />
+                      <input type="checkbox" value="Eastern" onChange = {(e) => this.updateFilter(e)}/>
+                      <label className="checkbox-inline pl-2">Eastern</label> <br />
+                      <input type="checkbox" value="Central" onChange = {(e) => this.updateFilter(e)}/>
+                      <label className="checkbox-inline pl-2">Central</label> <br />
+                </div>
+                <div id="Population">
+                  <h4 className="font-weight-bold mt-4">Population</h4>
+                    <input type="checkbox" value="_5" onChange = {(e) => this.updateFilter(e)} />
+                    <label className="checkbox-inline pl-2"> &lt; 500,000 </label><br />
+                    <input type="checkbox" value="5_20" onChange = {(e) => this.updateFilter(e)}/>
+                    <label className="checkbox-inline pl-2">500,000 - 2 million</label><br />
+                    <input type="checkbox" value="20_" onChange = {(e) => this.updateFilter(e)}/>
+                    <label className="checkbox-inline pl-2"> &gt; 2 million</label><br />
+                </div>
+                <div id="City">
+                  <h4 className="font-weight-bold mt-4">City</h4>
+                    <input type="checkbox" value="Taipei" onChange = {(e) => this.updateFilter(e)}/>
+                    <label className="checkbox-inline pl-2">Taipei</label> <br />
+                    <input type="checkbox" value="Taichung" onChange = {(e) => this.updateFilter(e)}  />
+                    <label className="checkbox-inline pl-2">Taichung</label><br />
+                    <input type="checkbox" value="Kaohsiung" onChange = {(e) => this.updateFilter(e)}/>
+                    <label className="checkbox-inline pl-2">Kaohsiung</label><br />
+                    <input type="checkbox" value="Taoyuan" onChange = {(e) => this.updateFilter(e)}/>
+                    <label className  ="checkbox-inline pl-2">Taoyuan</label><br />
+                </div>    
+                <iframe id="fullmap" src="https://www.google.com/maps/d/embed?mid=1H2WUKmQ8z5mXt6oaqKKXFFEvvH-6lybo&hl=en" width="200" height="300" className = "bigmap" title="Map of all school locations"></iframe>
+              </div>
+            
+
+              <div id="App" className="col-md-9 col-sm-9 col-xs-9 ">
+                  <h2 className="font-weight-bold text-center mt-3 mb-4 ml-3 bg-dark text-white rounded">Find Your School</h2>
+                  {this.state.appView ? 
+                    <div className="container ">
+                      <div className="row">
+                        {this.state.schools.map((obj, i) => 
+                          <div className="col-md-4" key={i}>
+                            <img className="rounded" src="http://www.unesco.vg/iau/wp-content/uploads/2017/10/44.jpg"></img>
+                            <div className = "UniName" onClick={() => this.changeView(i) }>{obj.university}</div>
+                            <div>{obj.center}</div>    
+                          </div>     
+                        )}  
+                      </div>
+                    </div>
+                    : 
+                    <School backToList={(i) => this.changeView(i)} school={this.state.schools[this.state.selectedSchoolIndex]}/>
+                  }
+              </div>  
+              
+            </div>
+          </div>
+        </main>
+      </body>
     );
   }
 }

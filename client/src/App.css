@@ -1,40 +1,37 @@
 
 
-.App {
+#App {
   font-family: Helvetica, sans-serif;
 }
-
+body {
+  text-align: center;
+}
 .bigmap {
     border: 0;
     margin-top: 15px;
 }
 
-.hero-image {
+
+
+#hero {
+  background-image: url('https://images.unsplash.com/photo-1470004914212-05527e49370b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1526&q=80');
+  background-repeat: no-repeat;
+  background-size: cover; 
+  background-position: center center;
   height: 80vh; 
   width: 100vw; 
   object-fit: cover; 
+  color: white;
 }
 
-.hero-text h1{
+
+
+#hero-text {
   position: absolute;
   top: 50%;
-  left: 15%;
-  transform: translate(-50%, -50%);
-  font-size: 5vw;
-  text-align: left;
-  color: white; 
 }
 
-.hero-text p{
-  position: absolute;
-  top: 60%;
-  left: 60%;
-  transform: translate(-50%, -50%);
-  font-size: 1.5vw;
-  text-align: left;
-  color: white; 
-  width: 30%;
-}
+
 
 .UniName {
   font-weight: bold;
@@ -42,21 +39,6 @@
   color: darkslategray;
 }
 
-.body {
-  text-align: center;
-}
 
-.checklist {
-  float: left;
-  text-align: left;
-  margin: 1.5vw;
-  margin-top: 4vw;
-}
-
-#gallery {
-  float: left;
-  margin-left: 20vw;
-  text-align: left;
-}
 
 
