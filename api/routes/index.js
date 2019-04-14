@@ -163,4 +163,26 @@ router.post('/api/v1/schools/reviews', (req, res, next) => {
   }); 
 });  
 
+router.put('/api/v1/users/', function(req, res, next) {
+
+  let baseQuery = `INSERT INTO interests (userId, interestTag) VALUES `
+  let insertValues = ""
+
+  for ( let i = 0; i < req.body.interestTag.length; i++ ) {
+    if ( i === req.body.interestTag.length - 1) {
+      insertValues += `((SELECT userId FROM user WHERE email="${req.body.email}"), "${req.body.interestTag[i]}");`
+    } else {
+      insertValues += `((SELECT userId FROM user WHERE email="${req.body.email}"), "${req.body.interestTag[i]}"), `
+    }
+  }
+
+  db(`UPDATE user SET photo="${req.body.photo}", industry="${req.body.industry}", jobType="${req.body.jobType}", years=${req.body.years}, intro="${req.body.intro}", country="${req.body.country}", city="${req.body.city}", role=${req.body.role}, meeting=${req.body.meeting}, firstName="${req.body.firstName}", lastName="${req.body.lastName}" WHERE email="${req.body.email}";`);
+  db(baseQuery + insertValues)
+  .then(results => {
+    if (results.error) {
+      res.status(500).send(resutls.error);
+    }
+  })
+})
+
 module.exports = router;

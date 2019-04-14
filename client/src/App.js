@@ -129,7 +129,8 @@ class App extends Component {
   
   render() {
     return (
-      <body>
+      <div>
+        {console.log(this.state.schools)}
         <header>
           <div className="jumbotron" id="hero"> 
            
@@ -208,7 +209,7 @@ class App extends Component {
             </div>
           </div>
         </main>
-      </body>
+      </div>
     );
   }
 }
